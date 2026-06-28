@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yantiku.module.user.mapper.DailyStatsMapper">
+
+    <!-- 插入每日统计 -->
+    <insert id="insert" parameterType="com.yantiku.module.user.model.entity.DailyStats">
+        INSERT INTO daily_stats (user_id, stat_date, questions_answered, correct_count, duration_sec, created_at)
+        VALUES (#{stats.userId}, #{stats.statDate}, #{stats.questionsAnswered},
+                #{stats.correctCount}, #{stats.studyDurationSeconds},
+                #{stats.createdAt})
+    </insert>
+
+    <!-- 插入或更新（当日首次答题插入，之后再答更新） -->
+    <insert id="upsert">
+        INSERT INTO daily_stats (user_id, stat_date, questions_answered, correct_count, created_at)
+        VALUES (#{userId}, CURDATE(), 1, #{isCorrect}, NOW())
+        ON DUPLICATE KEY UPDATE
+            questions_answered = questions_answered + 1,
+            correct_count = correct_count + #{isCorrect}
+    </insert>
+
+    <!-- 查询用户从指定日期往前连续的天数中的 stat_date 列表 -->
+    <select id="countConsecutiveDays" resultType="java.time.LocalDate">
+        SELECT DISTINCT ds.stat_date
+        FROM daily_stats ds
+        WHERE ds.user_id = #{userId}
+          AND ds.stat_date &lt;= #{today}
+        ORDER BY ds.stat_date DESC
+        LIMIT 365
+    </select>
+</mapper>

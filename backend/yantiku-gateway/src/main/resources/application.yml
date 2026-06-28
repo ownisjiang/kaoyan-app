@@ -1,0 +1,55 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: yantiku-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:}
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # Auth service (public + protected)
+        - id: auth-service
+          uri: lb://yantiku-auth
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - StripPrefix=0
+        # User service
+        - id: user-service
+          uri: lb://yantiku-auth
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuth
+        # Question service
+        - id: question-service
+          uri: lb://yantiku-question
+          predicates:
+            - Path=/api/v1/directions/**,/api/v1/subjects/**,/api/v1/knowledge-points/**,/api/v1/questions/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuth
+        # Practice service
+        - id: practice-service
+          uri: lb://yantiku-practice
+          predicates:
+            - Path=/api/v1/practice/**,/api/v1/grading/**,/api/v1/diagnostic/**,/api/v1/achievements/**,/api/v1/wrong-book/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuth
+
+jwt:
+  access-secret: ${JWT_ACCESS_SECRET:yantiku-dev-access-key-2026-local}
+
+logging:
+  level:
+    com.yantiku: INFO

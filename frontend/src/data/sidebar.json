@@ -1,0 +1,12 @@
+{
+  "brand": {
+    "name": "研题库",
+    "subtitle": "冲刺刷题平台"
+  },
+  "navItems": [
+    { "key": "home", "label": "首页", "to": "/" },
+    { "key": "wrongBook", "label": "错题本", "to": "/wrong-book" },
+    { "key": "report", "label": "诊断报告", "to": "/report" }
+  ],
+  "userRoute": "/profile"
+}

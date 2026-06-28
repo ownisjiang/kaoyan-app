@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yantiku.module.achievement.mapper.UserAchievementMapper">
+
+    <insert id="upsert" parameterType="com.yantiku.module.achievement.model.entity.UserAchievement">
+        INSERT INTO user_achievements (user_id, achievement_id, progress, unlocked_at)
+        VALUES (#{ua.userId}, #{ua.achievementId}, #{ua.progress}, NULL)
+        ON DUPLICATE KEY UPDATE
+            progress = CASE
+                WHEN progress &lt; #{ua.progress} THEN #{ua.progress}
+                ELSE progress
+            END,
+            unlocked_at = CASE
+                WHEN unlocked_at IS NULL AND #{ua.progress} >= 100 THEN NOW()
+                ELSE unlocked_at
+            END
+    </insert>
+
+</mapper>

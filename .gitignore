@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+backend/target/
+
+# JDK (local only)
+jdk-21.0.11+10/
+
+# Logs
+*.log
+logs/
+backend/logs/
+
+# Data & backups
+backup/
+docker/mysql/data/
+docker/redis/data/
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+
+# Maven wrapper (Docker builds use official maven image)
+backend/.mvn/
+
+# Seed data (exclude from GitHub — contains test accounts and questions)
+backend/**/db/migration/V2__seed_data.sql

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yantiku.module.practice.mapper.UserAnswerMapper">
+
+    <!-- 插入答题记录 -->
+    <insert id="insert" parameterType="com.yantiku.module.practice.model.entity.UserAnswer"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_answers (
+            session_id, user_id, question_id,
+            user_answer, is_correct, score, max_score,
+            time_spent, is_collected, ai_feedback, submitted_at
+        ) VALUES (
+            #{answer.sessionId}, #{answer.userId}, #{answer.questionId},
+            #{answer.userAnswer}, #{answer.isCorrect}, #{answer.score}, #{answer.maxScore},
+            #{answer.timeSpent}, #{answer.isCollected}, #{answer.aiFeedback}, #{answer.submittedAt}
+        )
+    </insert>
+
+</mapper>

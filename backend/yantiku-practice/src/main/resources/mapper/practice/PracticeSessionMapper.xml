@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yantiku.module.practice.mapper.PracticeSessionMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="session.id">
+        INSERT INTO practice_sessions (user_id, subject_id, mode,
+            total_questions, total_score, status, start_time)
+        VALUES (#{session.userId}, #{session.subjectId}, #{session.mode},
+            #{session.totalQuestions}, #{session.totalScore}, #{session.status}, NOW())
+    </insert>
+
+</mapper>

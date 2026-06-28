@@ -1,0 +1,9 @@
+{
+  "directionId": "11408",
+  "practiceModes": [
+    { "type": "choice", "mode": "quick_quiz", "label": "选择题速刷", "desc": "单选/多选 · 即时判分", "route": "/quiz", "active": false },
+    { "type": "fill-blank", "mode": "fill_blank", "label": "填空题精练", "desc": "数学符号输入 · AI秒判", "route": "/fill-blank", "active": false },
+    { "type": "comprehensive", "mode": "comprehensive", "label": "综合题", "desc": "多维度评分 · 付费", "route": "/comprehensive", "active": false },
+    { "type": "mock", "mode": "mock_exam", "label": "模考模式", "desc": "三合一全真模考 · 诊断报告", "route": "/mock-exam", "active": false }
+  ]
+}

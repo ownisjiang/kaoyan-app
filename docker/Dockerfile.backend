@@ -1,0 +1,30 @@
+# ---- Stage 1: Build ----
+FROM maven:3.9-eclipse-temurin-21 AS builder
+ARG MODULE
+
+WORKDIR /build
+COPY backend/pom.xml backend/pom.xml
+COPY backend/yantiku-common/pom.xml backend/yantiku-common/pom.xml
+COPY backend/yantiku-gateway/pom.xml backend/yantiku-gateway/pom.xml
+COPY backend/yantiku-auth/pom.xml backend/yantiku-auth/pom.xml
+COPY backend/yantiku-question/pom.xml backend/yantiku-question/pom.xml
+COPY backend/yantiku-practice/pom.xml backend/yantiku-practice/pom.xml
+
+# 预下载依赖（利用 Docker 缓存层）
+RUN cd backend && mvn dependency:go-offline -pl ${MODULE} -am -q -DskipTests || true
+
+COPY backend/ backend/
+
+RUN cd backend && mvn package -pl ${MODULE} -am -q -DskipTests
+
+# ---- Stage 2: Run ----
+FROM eclipse-temurin:21-jre-alpine
+ARG MODULE
+ARG PORT
+
+WORKDIR /app
+COPY --from=builder /build/backend/${MODULE}/target/*.jar app.jar
+
+ENV JAVA_OPTS="-Xms256m -Xmx512m"
+EXPOSE ${PORT}
+ENTRYPOINT exec java $JAVA_OPTS -jar app.jar

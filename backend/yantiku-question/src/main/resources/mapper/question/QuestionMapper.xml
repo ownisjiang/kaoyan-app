@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yantiku.module.question.mapper.QuestionMapper">
+
+    <sql id="searchConditions">
+        <where>
+            <if test="dto.subjectId != null">AND subject_id = #{dto.subjectId}</if>
+            <if test="dto.knowledgePointId != null">AND knowledge_point_id = #{dto.knowledgePointId}</if>
+            <if test="dto.questionType != null">AND type = #{dto.questionType}</if>
+            <if test="dto.difficulty != null">AND difficulty = #{dto.difficulty}</if>
+            <if test="dto.examYear != null">AND year = #{dto.examYear}</if>
+            <if test="dto.keyword != null and dto.keyword != ''">
+                AND (content LIKE CONCAT('%', #{dto.keyword}, '%')
+                     OR source LIKE CONCAT('%', #{dto.keyword}, '%'))
+            </if>
+            <if test="dto.activeOnly == null or dto.activeOnly">AND is_active = 1</if>
+        </where>
+    </sql>
+
+    <select id="searchQuestions" resultType="com.yantiku.module.question.model.entity.Question">
+        SELECT id, type AS questionType, difficulty,
+               subject_id AS subjectId,
+               knowledge_point_id AS knowledgePointId,
+               content, options, answer,
+               explanation AS analysis, source,
+               year AS examYear, use_count AS useCount,
+               correct_count AS correctCount, is_active AS isActive, created_at AS createdAt
+        FROM questions
+        <include refid="searchConditions"/>
+        ORDER BY id DESC
+        LIMIT #{dto.offset}, #{dto.limit}
+    </select>
+
+    <select id="countQuestions" resultType="long">
+        SELECT COUNT(*) FROM questions
+        <include refid="searchConditions"/>
+    </select>
+
+    <select id="findRandom" resultType="com.yantiku.module.question.model.entity.Question">
+        SELECT id, type AS questionType, difficulty,
+               subject_id AS subjectId,
+               knowledge_point_id AS knowledgePointId,
+               content, options, answer, explanation AS analysis, source,
+               year AS examYear, use_count AS useCount,
+               correct_count AS correctCount, is_active AS isActive, created_at AS createdAt
+        FROM questions
+        WHERE is_active = 1
+        <if test="subjectId != null">AND subject_id = #{subjectId}</if>
+        <if test="questionType != null">AND type = #{questionType}</if>
+        ORDER BY RAND()
+        LIMIT #{limit}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="question.id">
+        INSERT INTO questions (type, difficulty, subject_id, knowledge_point_id,
+            content, answer, explanation, source, year, is_active, created_at, updated_at)
+        VALUES (#{question.questionType}, #{question.difficulty},
+            #{question.subjectId}, #{question.knowledgePointId}, #{question.content},
+            #{question.answer}, #{question.analysis},
+            #{question.source}, #{question.examYear}, 1, NOW(), NOW())
+    </insert>
+
+    <update id="update">
+        UPDATE questions
+        <set>
+            <if test="question.difficulty != null">difficulty = #{question.difficulty},</if>
+            <if test="question.content != null">content = #{question.content},</if>
+            <if test="question.optionsJson != null">options_json = #{question.optionsJson},</if>
+            <if test="question.answer != null">answer = #{question.answer},</if>
+            <if test="question.explanation != null">explanation = #{question.explanation},</if>
+            <if test="question.status != null">status = #{question.status},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{question.id}
+    </update>
+
+</mapper>

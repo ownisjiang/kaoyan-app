@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yantiku.module.diagnostic.mapper.DiagnosticReportMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="report.id">
+        INSERT INTO diagnostic_reports (
+            user_id, session_id, subject_id, report_type,
+            overall_score, ability_rating,
+            radar_data, weak_points, strengths, suggestions, time_analysis,
+            generated_at
+        ) VALUES (
+            #{report.userId}, #{report.sessionId}, #{report.subjectId}, #{report.reportType},
+            #{report.overallScore}, #{report.abilityRating},
+            #{report.radarData}, #{report.weakPoints}, #{report.strengths},
+            #{report.suggestions}, #{report.timeAnalysis},
+            NOW()
+        )
+    </insert>
+
+</mapper>

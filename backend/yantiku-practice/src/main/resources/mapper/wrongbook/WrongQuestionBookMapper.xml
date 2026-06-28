@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yantiku.module.wrongbook.mapper.WrongQuestionBookMapper">
+
+    <!-- 插入或更新错题（ON DUPLICATE KEY UPDATE） -->
+    <insert id="upsert" parameterType="com.yantiku.module.wrongbook.model.entity.WrongQuestionBook">
+        INSERT INTO wrong_question_book (
+            user_id, question_id, subject_id,
+            wrong_count, consecutive_correct, last_wrong_at,
+            mastery_level, status, created_at, updated_at
+        ) VALUES (
+            #{entry.userId}, #{entry.questionId}, #{entry.subjectId},
+            1, 0, NOW(),
+            0, 'active', NOW(), NOW()
+        )
+        ON DUPLICATE KEY UPDATE
+            wrong_count = wrong_count + 1,
+            consecutive_correct = 0,
+            last_wrong_at = NOW(),
+            status = 'active',
+            updated_at = NOW()
+    </insert>
+
+    <!-- 批量更新错题状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE wrong_question_book
+        SET status = #{status}, updated_at = NOW()
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

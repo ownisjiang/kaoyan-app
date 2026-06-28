@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yantiku.module.user.mapper.UserMapper">
+
+    <!-- 插入用户（自动回填主键） -->
+    <insert id="insert" parameterType="com.yantiku.module.user.model.entity.User" useGeneratedKeys="true" keyProperty="user.id">
+        INSERT INTO users (phone, email, password_hash, nickname, avatar_url,
+                           target_direction_id, target_school, exam_year,
+                           role, status, created_at, updated_at)
+        VALUES (#{user.phone}, #{user.email}, #{user.passwordHash}, #{user.nickname}, #{user.avatarUrl},
+                #{user.targetDirectionId}, #{user.targetSchool}, #{user.examYear},
+                #{user.role}, #{user.status}, #{user.createdAt}, #{user.updatedAt})
+    </insert>
+
+    <!-- 动态更新用户（仅更新非空字段） -->
+    <update id="update" parameterType="com.yantiku.module.user.model.entity.User">
+        UPDATE users
+        <set>
+            <if test="user.phone != null">phone = #{user.phone},</if>
+            <if test="user.email != null">email = #{user.email},</if>
+            <if test="user.passwordHash != null">password_hash = #{user.passwordHash},</if>
+            <if test="user.nickname != null">nickname = #{user.nickname},</if>
+            <if test="user.avatarUrl != null">avatar_url = #{user.avatarUrl},</if>
+            <if test="user.targetDirectionId != null">target_direction_id = #{user.targetDirectionId},</if>
+            <if test="user.targetSchool != null">target_school = #{user.targetSchool},</if>
+            <if test="user.examYear != null">exam_year = #{user.examYear},</if>
+            <if test="user.role != null">role = #{user.role},</if>
+            <if test="user.status != null">status = #{user.status},</if>
+            <if test="user.lastLoginAt != null">last_login_at = #{user.lastLoginAt},</if>
+            <if test="user.lastActiveDate != null">last_active_date = #{user.lastActiveDate},</if>
+            updated_at = NOW(3)
+        </set>
+        WHERE id = #{user.id} AND deleted_at IS NULL
+    </update>
+
+</mapper>
