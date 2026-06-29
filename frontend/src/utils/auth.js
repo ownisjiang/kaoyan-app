@@ -51,3 +51,9 @@ export function clearAuth() {
 export function isLoggedIn() {
   return !!getAccessToken()
 }
+
+/** 是否管理员 */
+export function isAdmin() {
+  const user = getLocalUser()
+  return user && user.role === 'admin'
+}

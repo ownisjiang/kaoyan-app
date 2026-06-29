@@ -1,7 +1,9 @@
 package com.yantiku.module.question.controller;
 
+import com.yantiku.common.annotation.CurrentUser;
 import com.yantiku.common.dto.ApiResponse;
 import com.yantiku.common.dto.PageResult;
+import com.yantiku.module.question.model.dto.CreateQuestionDTO;
 import com.yantiku.module.question.model.dto.QuestionSearchDTO;
 import com.yantiku.module.question.model.vo.QuestionDetailVO;
 import com.yantiku.module.question.model.vo.QuestionVO;
@@ -164,6 +166,48 @@ public class QuestionController {
     @PostMapping("/{id}/report")
     public ApiResponse<Void> reportQuestion(@PathVariable Long id, @RequestBody Map<String, String> body) {
         log.info("report question: id={}", id);
+        return ApiResponse.ok();
+    }
+
+    // ==================== 管理员接口 ====================
+
+    /**
+     * 创建题目（仅管理员）
+     */
+    @PostMapping
+    public ApiResponse<Long> createQuestion(
+            @CurrentUser Long userId,
+            @Valid @RequestBody CreateQuestionDTO dto
+    ) {
+        log.info("管理员 {} 创建题目: type={}, subject={}", userId, dto.getQuestionType(), dto.getSubjectId());
+        Long id = questionService.createQuestion(userId, dto);
+        return ApiResponse.ok(id);
+    }
+
+    /**
+     * 更新题目（仅管理员）
+     */
+    @PutMapping("/{id}")
+    public ApiResponse<Void> updateQuestion(
+            @CurrentUser Long userId,
+            @PathVariable Long id,
+            @Valid @RequestBody CreateQuestionDTO dto
+    ) {
+        log.info("管理员 {} 更新题目: id={}", userId, id);
+        questionService.updateQuestion(id, dto);
+        return ApiResponse.ok();
+    }
+
+    /**
+     * 删除题目（仅管理员）
+     */
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteQuestion(
+            @CurrentUser Long userId,
+            @PathVariable Long id
+    ) {
+        log.info("管理员 {} 删除题目: id={}", userId, id);
+        questionService.deleteQuestion(id);
         return ApiResponse.ok();
     }
 }

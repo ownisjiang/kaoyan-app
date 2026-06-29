@@ -21,7 +21,9 @@ public class UserContextFilter implements Filter {
         String userIdStr = req.getHeader("X-User-Id");
         if (userIdStr != null) {
             try {
-                InternalUserContext.set(Long.parseLong(userIdStr));
+                Long userId = Long.parseLong(userIdStr);
+                String role = req.getHeader("X-User-Role");
+                InternalUserContext.set(userId, role);
             } catch (NumberFormatException e) {
                 log.warn("Invalid X-User-Id: {}", userIdStr);
             }

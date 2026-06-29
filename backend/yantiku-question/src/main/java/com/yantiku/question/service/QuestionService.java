@@ -3,6 +3,7 @@ package com.yantiku.module.question.service;
 import com.yantiku.common.dto.PageResult;
 import com.yantiku.module.question.mapper.QuestionMapper;
 import com.yantiku.module.question.model.entity.Question;
+import com.yantiku.module.question.model.dto.CreateQuestionDTO;
 import com.yantiku.module.question.model.dto.QuestionSearchDTO;
 import com.yantiku.module.question.model.vo.QuestionDetailVO;
 import com.yantiku.module.question.model.vo.QuestionVO;
@@ -129,5 +130,53 @@ public class QuestionService {
         return questions.stream()
                 .map(QuestionVO::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    // ==================== 管理员操作 ====================
+
+    public Long createQuestion(Long userId, CreateQuestionDTO dto) {
+        Question q = Question.builder()
+                .subjectId(dto.getSubjectId())
+                .knowledgePointId(dto.getKnowledgePointId())
+                .questionType(dto.getQuestionType())
+                .difficulty(dto.getDifficulty() != null ? dto.getDifficulty() : 1)
+                .examYear(dto.getExamYear())
+                .source(dto.getSource())
+                .content(dto.getContent())
+                .options(dto.getOptions())
+                .answer(dto.getAnswer())
+                .analysis(dto.getAnalysis())
+                .tags(dto.getTags())
+                .createdBy(userId)
+                .isActive(true)
+                .useCount(0)
+                .correctCount(0)
+                .build();
+        questionMapper.insert(q);
+        return q.getId();
+    }
+
+    public void updateQuestion(Long id, CreateQuestionDTO dto) {
+        Question q = questionMapper.findById(id);
+        if (q == null) throw new RuntimeException("题目不存在");
+        q.setSubjectId(dto.getSubjectId());
+        q.setKnowledgePointId(dto.getKnowledgePointId());
+        q.setQuestionType(dto.getQuestionType());
+        q.setDifficulty(dto.getDifficulty());
+        q.setExamYear(dto.getExamYear());
+        q.setSource(dto.getSource());
+        q.setContent(dto.getContent());
+        q.setOptions(dto.getOptions());
+        q.setAnswer(dto.getAnswer());
+        q.setAnalysis(dto.getAnalysis());
+        q.setTags(dto.getTags());
+        questionMapper.update(q);
+    }
+
+    public void deleteQuestion(Long id) {
+        Question q = questionMapper.findById(id);
+        if (q == null) throw new RuntimeException("题目不存在");
+        q.setIsActive(false);
+        questionMapper.update(q);
     }
 }

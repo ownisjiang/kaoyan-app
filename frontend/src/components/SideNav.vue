@@ -22,6 +22,10 @@
 
     <div class="side-nav__spacer"></div>
 
+    <router-link v-if="isAdminUser" to="/admin" class="side-nav__item" :class="{ 'side-nav__item--active': activeNav === 'admin' }">
+      <span>⚙️ 题库管理</span>
+    </router-link>
+
     <router-link :to="sidebar.userRoute" class="side-nav__user">
       <div class="side-nav__avatar">{{ userInitial }}</div>
       <span class="side-nav__username">{{ userNickname }}</span>
@@ -36,7 +40,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import sidebarData from '../data/sidebar.json'
 import { getMyProfile } from '../api/user.js'
-import { getLocalUser, clearAuth } from '../utils/auth.js'
+import { getLocalUser, clearAuth, isAdmin } from '../utils/auth.js'
 
 const router = useRouter()
 const sidebar = ref(sidebarData)
@@ -56,6 +60,8 @@ const userInitial = computed(() => {
 const userNickname = computed(() => {
   return profile.value?.nickname || getLocalUser()?.nickname || '用户'
 })
+
+const isAdminUser = computed(() => isAdmin())
 
 onMounted(async () => {
   try {

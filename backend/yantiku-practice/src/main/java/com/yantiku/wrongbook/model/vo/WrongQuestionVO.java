@@ -59,4 +59,12 @@ public class WrongQuestionVO {
 
     /** 题目内容预览（前100字符） */
     private String contentPreview;
-}
+
+    /** 选择题选项（JSON数组） */
+    private String options;
+
+    /** 题目完整内容 */
+    private String content;
+
+    /** 参考答案 */
+    private String answer;

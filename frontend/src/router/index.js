@@ -53,6 +53,12 @@ const router = createRouter({
       meta: { title: '模考' }
     },
     {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('../views/AdminPage.vue'),
+      meta: { title: '题库管理', adminOnly: true }
+    },
+    {
       path: '/wrong-book',
       name: 'wrongBook',
       component: () => import('../views/WrongBookPage.vue'),

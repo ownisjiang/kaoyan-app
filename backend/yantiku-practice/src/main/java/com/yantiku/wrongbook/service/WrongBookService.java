@@ -228,7 +228,10 @@ public class WrongBookService {
                 if (question != null) {
                     builder.questionType(question.getQuestionType())
                             .difficulty(question.getDifficulty())
-                            .contentPreview(getContentPreview(question.getContent()));
+                            .contentPreview(getContentPreview(question.getContent()))
+                            .content(question.getContent())
+                            .answer(question.getAnswer())
+                            .options(question.getOptions());
                 }
             } catch (Exception e) {
                 log.warn("查询题目失败: questionId={}, error={}", record.getQuestionId(), e.getMessage());

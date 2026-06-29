@@ -43,7 +43,19 @@
                     <span class="q-diff" :class="'diff--'+q.difficulty">难度 {{ q.difficulty }}</span>
                     <span class="q-wrong">错 {{ q.wrongCount }} 次</span>
                   </div>
-                  <p class="q-text">{{ q.contentPreview || '(题目内容加载中...)' }}</p>
+                  <p class="q-text">
+                    <span v-if="q.questionType === 2" class="fill-content" v-html="renderFillBlank(q.content || q.contentPreview)"></span>
+                    <span v-else>{{ q.content || q.contentPreview || '(题目内容加载中...)' }}</span>
+                  </p>
+                  <!-- 选择题选项 -->
+                  <div v-if="q.questionType === 1 && q.options" class="q-options">
+                    <span v-for="(opt, oi) in parseOptions(q.options)" :key="oi" class="q-opt">{{ opt }}</span>
+                  </div>
+                  <!-- 答案 -->
+                  <div v-if="q.answer" class="q-answer" @click="toggleAnswer(q.id)">
+                    <span class="q-answer-label">{{ expandedAnswers[q.id] ? '🔽 答案' : '▶ 答案' }}</span>
+                    <span v-if="expandedAnswers[q.id]" class="q-answer-text">{{ q.answer }}</span>
+                  </div>
                   <div class="q-actions">
                     <button class="btn sm" @click="doReview(q.id)">{{ q.lastReviewedAt ? '已复习' : '标记复习' }}</button>
                     <button class="btn sm danger" @click="doRemove(q.questionId, gi, ti, q.id)">移除</button>
@@ -71,6 +83,12 @@ const groups = ref([])
 const openGroups = reactive({})
 const openTypes = reactive({})
 
+const expandedAnswers = reactive({})
+
+function toggleAnswer(id) {
+  expandedAnswers[id] = !expandedAnswers[id]
+}
+
 onMounted(async () => {
   try {
     const [statResult, groupedResult] = await Promise.all([
@@ -96,6 +114,19 @@ function toggleGroup(gi) {
 function toggleType(gi, ti) {
   const key = gi + '-' + ti
   openTypes[key] = !openTypes[key]
+}
+
+function parseOptions(raw) {
+  if (!raw) return []
+  try {
+    const arr = typeof raw === 'string' ? JSON.parse(raw) : raw
+    return Array.isArray(arr) ? arr : Object.values(arr)
+  } catch { return [] }
+}
+
+function renderFillBlank(text) {
+  if (!text) return ''
+  return text.replace(/_{2,}/g, '<span class="blank-mark">___</span>')
 }
 
 async function doReview(wrongBookId) {
@@ -165,6 +196,13 @@ async function doRemove(questionId, gi, ti, wbId) {
 .diff--5 { background: #fecaca; color: #991b1b; }
 .q-wrong { margin-left: auto; font-size: 12px; color: #ef4444; font-weight: 500; }
 .q-text { font-size: 13px; line-height: 1.6; color: #334155; margin: 0 0 8px 0; }
+.q-options { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.q-opt { font-size: 12px; padding: 2px 10px; background: #e2e8f0; border-radius: 6px; color: #475569; }
+.q-answer { margin-bottom: 8px; font-size: 12px; cursor: pointer; color: #6366f1; }
+.q-answer-label { font-weight: 500; }
+.q-answer-text { display: block; margin-top: 4px; padding: 6px 10px; background: #f0fdf4; border-radius: 6px; color: #166534; }
+.fill-content { line-height: 2; }
+:deep(.blank-mark) { display: inline-block; min-width: 40px; padding: 0 6px; border-bottom: 2px solid #6366f1; color: #6366f1; text-align: center; margin: 0 2px; }
 .q-actions { display: flex; gap: 6px; }
 .btn { padding: 8px 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; color: #475569; font-size: 14px; cursor: pointer; }
 .btn:hover { background: #f8fafc; }

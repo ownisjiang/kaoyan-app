@@ -83,3 +83,18 @@ export function getSimilarQuestions(id) {
 export function reportQuestion(id, data) {
   return http.post(`/questions/${id}/report`, data)
 }
+
+/** 创建题目（管理员） */
+export function createQuestion(data) {
+  return http.post('/questions', data)
+}
+
+/** 更新题目（管理员） */
+export function updateQuestion(id, data) {
+  return http.put(`/questions/${id}`, data)
+}
+
+/** 删除题目（管理员） */
+export function deleteQuestion(id) {
+  return http.delete(`/questions/${id}`)
+}
